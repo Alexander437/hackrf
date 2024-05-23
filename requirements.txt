@@ -1,0 +1,4 @@
+uvicorn
+numpy
+scipy
+pyhackrf
