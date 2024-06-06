@@ -1,5 +1,13 @@
 # HackRF
 
+https://habr.com/ru/companies/vk/articles/745016/
+https://github.com/TUIlmenauAMS/MRSP_Tutorials/tree/master/seminars
+
+ТХ:
+
+- `sample_rate` - [8 MHz; 20 GHz]
+- `center_freq` - [1 MHz + `sample_rate / 2`; 6 GHz - `sample_rate / 2`]
+
 ## Подключение
 
 [link](https://my-gnuradio.org/2015/03/19/obzor-hackrf-one-chast-1-raspakovka-i-podklyuchenie/)

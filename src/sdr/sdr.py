@@ -16,7 +16,7 @@ def register_sdr(provider: str, cls) -> None:
 
 class SDR(ABC):
     @abstractmethod
-    def read_samples(self):
+    async def read_samples(self):
         raise NotImplementedError
 
 

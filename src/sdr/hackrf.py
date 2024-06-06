@@ -1,3 +1,4 @@
+import asyncio
 from hackrf import HackRF
 from src.sdr.sdr import SDR
 
@@ -8,6 +9,7 @@ class HackrfSDR(SDR):
         self.sample_rate = sample_rate
         self.center_freq = center_freq
 
-    def read_samples(self):
+    async def read_samples(self):
         while True:
             yield self.hrf.read_samples()
+            await asyncio.sleep(0.1)
