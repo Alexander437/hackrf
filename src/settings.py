@@ -7,15 +7,15 @@ class Settings(BaseSettings):
 
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "info")
     # SDR initial config
-    INIT_SAMPLE_RATE: int = os.getenv("INIT_SAMPLE_RATE", 20e6)
-    INIT_CENTER_FREQ: float = os.getenv("INIT_CENTER_FREQ", 88.5e6)
+    INIT_SAMPLE_RATE_M: int = os.getenv("INIT_SAMPLE_RATE", 20)
+    INIT_CENTER_FREQ_M: int = os.getenv("INIT_CENTER_FREQ", 80)
     # FFT config
-    NFFT: int = os.getenv("NFFT", 256)
-    DETREND_FUNC: str = os.getenv("DETREND_FUNC", "linear")
-    NOVERLAP: int = int(os.getenv("NOVERLAP", "0"))
-    NOVERLAP = max(0, NOVERLAP)
+    INIT_NFFT: int = os.getenv("INIT_NFFT", 256)
+    INIT_DETREND_FUNC: str = os.getenv("INIT_DETREND_FUNC", "linear")
+    INIT_NOVERLAP: int = int(os.getenv("INIT_NOVERLAP", "0"))
+    INIT_NOVERLAP = max(0, INIT_NOVERLAP)
 
-    if DETREND_FUNC not in ["linear", "mean", "none"]:
+    if INIT_DETREND_FUNC not in ["linear", "mean", "none"]:
         raise ValueError("DETREND_FUNC may be `linear`, `mean` or `none`")
 
 

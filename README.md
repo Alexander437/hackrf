@@ -5,7 +5,7 @@ https://github.com/TUIlmenauAMS/MRSP_Tutorials/tree/master/seminars
 
 ТХ:
 
-- `sample_rate` - [8 MHz; 20 GHz]
+- `sample_rate` - [8 MHz; 20 MHz]
 - `center_freq` - [1 MHz + `sample_rate / 2`; 6 GHz - `sample_rate / 2`]
 
 ## Подключение
@@ -36,7 +36,15 @@ pip install -r requirements.txt
 # sudo apt-get install -y python3-soapysdr
 ```
 
+## Запуск
+
+```bash
+streamlit run src/main.py
+```
+
 ## Resources
 
 * [webradio](https://github.com/ColbyAtCRI/webradio)
 * [fastapi example proj](https://github.com/artemonsh/fastapi-onion-architecture)
+* [Построение графов](https://github.com/krish-adi/barfi)
+* [Построение графов 2](https://streamlit.io/components?category=graphs)

@@ -1,0 +1,30 @@
+#### MATPLOTLIBRC FORMAT
+
+lines.linewidth: 1.5
+lines.linestyle: -    # solid line
+lines.color:     black
+patch.edgecolor: black
+
+text.color: black
+
+font.weight:  500
+font.family:  sans-serif
+font.sans-serif: DejaVu Sans
+font.size:    10.0
+
+axes.facecolor: white
+axes.grid: False
+axes.edgecolor: gray
+axes.labelcolor: black
+axes.prop_cycle: cycler('color', 'bgrcmyk')
+
+xaxis.labellocation: center
+yaxis.labellocation: top
+
+xtick.color: black
+ytick.color: black
+
+grid.color: gray
+
+figure.facecolor: white
+figure.edgecolor: white
