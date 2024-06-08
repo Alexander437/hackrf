@@ -8,6 +8,6 @@ res.show()
 
 """
 from src.sdr.hackrf import HackrfSDR
-from src.sdr.sdr import register_sdr, get_sdr, list_sdr
+from src.sdr.sdr import register_sdr
 
 register_sdr("HackRF", HackrfSDR)

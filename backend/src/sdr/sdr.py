@@ -2,18 +2,15 @@ import threading
 from abc import ABC, abstractmethod
 
 import numpy as np
-import streamlit as st
-from matplotlib import pyplot as plt
 
 from src.fft import fft
 from src.settings import settings
 
-plt.style.use('./mpl_styles/dark.mplstyle')
+# plt.style.use('./mpl_styles/dark.mplstyle')
 font = {'family': 'DejaVu Sans', 'weight': 500, 'size': 14}
 SDR_REGISTRY = {}
 
 
-@st.cache_resource
 def register_sdr(provider: str, cls) -> None:
     global SDR_REGISTRY
     if provider in SDR_REGISTRY:
@@ -28,11 +25,6 @@ def register_sdr(provider: str, cls) -> None:
 
 class SDR(ABC):
 
-    def __init__(self):
-        self.lock = threading.Lock()
-        self.fig, (self.ax1, self.ax2) = plt.subplots(nrows=2, figsize=(10, 7),
-                                   gridspec_kw={'height_ratios': [1, 2]})
-
     @abstractmethod
     def read_samples(self) -> np.ndarray:
         raise NotImplementedError
@@ -43,10 +35,6 @@ class SDR(ABC):
 
     @abstractmethod
     def set_center_freq(self, sample_rate: int):
-        raise NotImplementedError
-
-    @abstractmethod
-    def stop(self):
         raise NotImplementedError
 
     def get_graphs(self, NFFT: int, detrend: str, noverlap: int):
@@ -88,7 +76,6 @@ def get_sdr(provider: str) -> SDR:
     return SDR_REGISTRY[provider]
 
 
-@st.cache_data
 def list_sdr():
     global SDR_REGISTRY
     return [provider for provider in SDR_REGISTRY]
