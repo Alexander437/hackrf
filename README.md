@@ -46,5 +46,5 @@ streamlit run src/main.py
 
 * [webradio](https://github.com/ColbyAtCRI/webradio)
 * [fastapi example proj](https://github.com/artemonsh/fastapi-onion-architecture)
-* [Построение графов](https://github.com/krish-adi/barfi)
-* [Построение графов 2](https://streamlit.io/components?category=graphs)
+* [heatmap](https://www.react-graph-gallery.com/heatmap)
+* https://charts.ag-grid.com/react/heatmap-series/

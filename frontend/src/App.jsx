@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,16 +9,18 @@ import {
   Legend,
 } from 'chart.js';
 import { Chart } from 'react-chartjs-2';
+
 import { getData, OPTIONS } from "./graph_utils.js";
 import FSlider from "./components/FSlider.jsx";
+import WriteInp from "./components/WriteInp.jsx";
 
 ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip,
-  Legend
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Tooltip,
+    Legend,
 );
 
 function App() {
@@ -47,10 +49,12 @@ function App() {
     }, []);
 
 
+    // <Chart ref={chartRef} type='line' data={chartData} options={OPTIONS} className="mb-8"/>
     return (
-    <div className="h-screen max-h-[90vh] overflow-auto flex flex-col justify-center items-center">
+    <div className="h-screen max-h-[95vh] overflow-auto flex flex-col justify-center items-center">
         <Chart ref={chartRef} type='line' data={chartData} options={OPTIONS} className="mb-8"/>
         <FSlider />
+        <WriteInp />
     </div>
     )
 }

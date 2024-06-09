@@ -3,4 +3,5 @@ fastapi
 uvicorn
 numpy
 scipy
+pillow
 pyhackrf
