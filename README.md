@@ -1,14 +1,6 @@
 # HackRF
 
-https://habr.com/ru/companies/vk/articles/745016/
-https://github.com/TUIlmenauAMS/MRSP_Tutorials/tree/master/seminars
-
-ТХ:
-
-- `sample_rate` - [8 MHz; 20 MHz]
-- `center_freq` - [1 MHz + `sample_rate / 2`; 6 GHz - `sample_rate / 2`]
-
-## Подключение
+## 1. Подключение
 
 [link](https://my-gnuradio.org/2015/03/19/obzor-hackrf-one-chast-1-raspakovka-i-podklyuchenie/)
 
@@ -20,7 +12,7 @@ sudo dmesg | grep HackRF
 # usb 3-3: Product: HackRF One
 ```
 
-## Установка пакетов
+## 2. Установка драйверов
 
 Образ для raspberry PI с нужными драйверами:
 https://github.com/luigifcruz/pisdr-image/releases
@@ -30,21 +22,46 @@ https://github.com/luigifcruz/pisdr-image/releases
 sudo apt-get update
 sudo apt-get install hackrf gr-osmosdr libhackrf-dev libhackrf0 libusb-1.0-0 libusb-1.0-0-dev libfftw3-dev
 hackrf_info
-pip install -r requirements.txt
 # https://pypi.org/project/pyhackrf/, https://github.com/dressel/pyhackrf
 # для работы блоков в gnuradio
 # sudo apt-get install -y python3-soapysdr
 ```
 
-## Запуск
+## 3. Сборка и запуск приложения
 
+Установка зависимостей
 ```bash
-streamlit run src/main.py
+pip install -r requirements.txt
+cd frontend && npm run deploy && cd ..
 ```
 
-## Resources
+Запуск без сборки
+```bash
+cd backend 
+uvicorn main:app
+```
 
-* [webradio](https://github.com/ColbyAtCRI/webradio)
-* [fastapi example proj](https://github.com/artemonsh/fastapi-onion-architecture)
-* [heatmap](https://www.react-graph-gallery.com/heatmap)
-* https://charts.ag-grid.com/react/heatmap-series/
+ИЛИ
+
+Сборка
+```bash
+pyinstaller --distpath app --onefile backend/main.py
+cp -r backend/app/static app
+```
+
+После сборки можно запускать так:
+```bash
+./app/main
+```
+
+## Запуск
+- Chrome >=87
+- Firefox >=78
+- Safari >=14
+- Edge >=88
+
+
+## ТХ
+HackRF:
+- `sample_rate` - [8 MHz; 20 MHz]
+- `center_freq` - [1 MHz + `sample_rate / 2`; 6 GHz - `sample_rate / 2`]

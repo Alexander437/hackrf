@@ -1,21 +1,39 @@
-import {useState} from "react";
-import {Button, Col, ConfigProvider, Input, Row} from "antd";
+import React, { useState, useMemo } from "react";
+import {Button, Col, ConfigProvider, Input, notification, Row} from "antd";
 import axios from "axios";
 
-const saveFile = (class_name) => {
-    axios.post(`http://localhost:8000/sdr/write_file?class_name=${class_name}`).then(r => {
-        console.log(class_name);
-        console.log(r.data);
-    })
-}
+const Context = React.createContext({
+  name: 'Default',
+});
 
 function WriteInp() {
-  const [inputValue, setInputValue] = useState("Drone model");
+    const [inputValue, setInputValue] = useState("Drone model");
+    const [api, contextHolder] = notification.useNotification();
+
+    const saveFile = (class_name) => {
+        axios.post(`http://localhost:8000/sdr/write_file?class_name=${class_name}`).then(r => {
+            console.log(r.data);
+            api.info({
+            message: `${r.data.ok}`,
+            description: `${r.data.message}`,
+            placement: 'bottomRight',
+            });
+        })
+    }
+
+    const contextValue = useMemo(
+        () => ({
+            name: 'Ant Design',
+        }),
+        [],
+    );
 
   const onChange = (newValue) => {
     setInputValue(newValue.target.value);
   };
   return (
+      <Context.Provider value={contextValue}>
+      {contextHolder}
       <div>
         <Row>
           <Col className="mr-3">
@@ -48,6 +66,7 @@ function WriteInp() {
             </Col>
         </Row>
       </div>
+      </Context.Provider>
   )
 }
 

@@ -1,3 +1,4 @@
+import time
 import threading
 
 from hackrf import HackRF
@@ -10,7 +11,7 @@ class HackrfSDR(SDR):
         self.hrf = HackRF()
         self.set_sample_rate(sample_rate_m)
         self.set_center_freq(center_freq_m)
-        self.locker = threading.Lock()
+        self.locker = threading.RLock()
 
     def read_samples(self):
         try:
@@ -18,6 +19,7 @@ class HackrfSDR(SDR):
                 return self.hrf.read_samples()
         except OSError:
             print("Failed to read samples")
+            time.sleep(2)
             return None
 
     def stop(self):

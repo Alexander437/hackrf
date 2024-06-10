@@ -38,8 +38,7 @@ class SDR(ABC):
         raise NotImplementedError
 
     def get_graphs(self, NFFT: int, detrend: str, noverlap: int):
-        with self.lock:
-            iq = self.read_samples()
+        iq = self.read_samples()
 
         if iq is not None:
             self.ax1.clear()
