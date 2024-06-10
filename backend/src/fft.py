@@ -20,7 +20,7 @@ def fft(
 
     detrend_func = detrends[detrend]
     P, freqs, t = mlab._spectral_helper(x=iq, y=None, NFFT=NFFT, Fs=sample_rate,
-                                     detrend_func=detrend, noverlap=noverlap, mode='psd')
+                                     detrend_func=detrend_func, noverlap=noverlap, mode='psd')
     freqs = (freqs + center_freq) / 1e6  # in MHz
     P = np.abs(P)
     # Если нужно перевести в dB

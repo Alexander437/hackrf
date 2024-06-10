@@ -1,5 +1,7 @@
 .idea
-data/
+app/
+./backend/app/data/
+backend/hrf_spec_segm/data/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
