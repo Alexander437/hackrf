@@ -20,6 +20,9 @@ class HackrfSDR(SDR):
         except OSError:
             print("Failed to read samples")
             time.sleep(2)
+            self.hrf = HackRF()
+            self.set_sample_rate(self.sample_rate / 1e6)
+            self.set_center_freq(self.center_freq / 1e6)
             return None
 
     def stop(self):

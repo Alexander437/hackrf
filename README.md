@@ -31,9 +31,9 @@ hackrf_info
 
 Установка зависимостей
 ```bash
-pip install -r requirements.txt
-cd frontend && npm run deploy && cd ..
-```
+pip install -r backend/requirements.txt
+cd frontend && npm i && npm run deploy && cd ..
+ ```
 
 Запуск без сборки
 ```bash
