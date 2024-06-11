@@ -73,8 +73,8 @@ async def get_spectrum(ws: WebSocket):
         await ws.close()
         print("WebSocket disconnected")
         await asyncio.sleep(1)
-        shutdown()
+        # shutdown()
     except ConnectionClosedError:
         print("Connection closed")
         await asyncio.sleep(1)
-        shutdown()
+        # shutdown()
