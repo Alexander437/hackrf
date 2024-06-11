@@ -31,16 +31,20 @@ jobs:
       with:
         node-version: 20.x
         cache: 'npm'
-    - name: Install frontend dependencies and build
+        cache-dependency-path: frontend/package-lock.json
+    - name: Install frontend dependencies
       run: |
-        cd frontend && npm install 
-        cd frontend && npm run deploy
+        cd frontend
+        npm install
+    - name: Build frontend
+      run: |
+        cd frontend
+        npm run deploy
 
     - name: Build with Pyinstaller
       run: |
         pyinstaller --distpath app --onefile backend/main.py
         cp -r backend/app/static app
-
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.3
       with:
