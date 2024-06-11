@@ -32,7 +32,7 @@ hackrf_info
 Установка зависимостей
 ```bash
 pip install -r backend/requirements.txt
-cd frontend && npm i && npm run deploy && cd ..
+cd frontend && npm i && npm run deploy && rsync -av --delete dist/* ../backend/app/static && cd ..
  ```
 
 Запуск без сборки
