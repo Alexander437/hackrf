@@ -6,6 +6,7 @@ starlette==0.37.2
 pyinstaller==6.8.0
 pydantic-settings==2.2.1
 numpy
+matplotlib
 scipy
 pillow==10.3.0
 cycler==0.12.1
