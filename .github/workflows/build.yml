@@ -45,11 +45,18 @@ jobs:
       run: |
         pyinstaller --distpath app --onefile backend/main.py
         cp -r backend/app/static app
+
+    - name: Prepare artifact directory
+      run: |
+        mkdir hrf_ubuntu
+        mv app hrf_ubuntu/
+        mv build hrf_ubuntu/
+        mv main.spec hrf_ubuntu/
     - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v4.3.3
+      uses: actions/upload-artifact@v4
       with:
         name: hrf_ubuntu
-        path: ./app
+        path: hrf_ubuntu/
         if-no-files-found: warn
         retention-days: 90
         compression-level: 6
