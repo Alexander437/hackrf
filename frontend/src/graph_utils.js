@@ -6,9 +6,20 @@ function createGradient(ctx, area) {
     return gradient;
 }
 
-export function getData(psd, freqs, chart) {
+function getFreqs(leftFreq, rightFreq, step) {
+    let arr = [];
+    let left = leftFreq
+
+    while (left < rightFreq) {
+        arr.push(left);
+        left += step
+    }
+    return arr;
+}
+
+export function getData(psd, leftFreq, rightFreq, step, chart) {
     return {
-        labels: freqs,
+        labels: getFreqs(leftFreq, rightFreq, step),
         datasets: [{
             data: psd,
             fill: false,
@@ -30,7 +41,7 @@ export const OPTIONS = {
     },
     scales: {
         y: {
-            min: -122,
+            min: -85,
             // max: -117,
             ticks: {
                 stepSize: 2
