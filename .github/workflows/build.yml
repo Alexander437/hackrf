@@ -2,7 +2,7 @@ name: HackRF
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "with_scanner_test" ]
   pull_request:
     branches: [ "main" ]
 
