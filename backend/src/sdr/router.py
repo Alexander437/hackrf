@@ -44,7 +44,7 @@ def write_file(class_name: str, id: int, srcName: str):
         "srcName": srcName,
         "data": []
     }
-    return {"ok": "Ok", "message": f"Файл {dir_name}/{num}.npz"}
+    return {"ok": "Ok", "message": f"Идет запись в файл {dir_name}/{num}.npz ..."}
 
 
 @router.post("/sub")
@@ -72,8 +72,9 @@ def unsub(recv: UnsubscribeRequest):
             del BUFFER[id]
         except:
             pass
+        finally:
+            logger.info(f"Unsubscription ({id})")
     sdr.unsubscribe(recv)
-    logger.info(f"Unsubscription ({recv.id})")
     return {"status": "ok"}
 
 
@@ -114,16 +115,19 @@ async def sse(request: Request):
                 logger.info("Request disconnected")
                 break
 
-            for event_id, value in BUFFER.items():
-                if len(value["data"]) > 0:
-                    yield {
-                        "event": event_id,
-                        "id": "message_id",
-                        "retry": MESSAGE_STREAM_RETRY_TIMEOUT,
-                        "data": json.dumps(value["data"][-1]),
-                    }
-                    value["data"].clear()
-                else:
-                    continue
+            try:
+                for event_id, value in BUFFER.items():
+                    if len(value["data"]) > 0:
+                        yield {
+                            "event": event_id,
+                            "id": "message_id",
+                            "retry": MESSAGE_STREAM_RETRY_TIMEOUT,
+                            "data": json.dumps(value["data"][-1]),
+                        }
+                        value["data"].clear()
+                    else:
+                        continue
+            except RuntimeError as e:
+                continue
 
     return EventSourceResponse(event_generator())

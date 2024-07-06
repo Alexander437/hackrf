@@ -12,8 +12,8 @@ const GraphCard = ({id, title, srcName, graphs, setGraphs}) => {
     const [chartData, setChartData] = useState({datasets: []});
 
     const onRemove = () => {
+        setGraphs(graphs.filter((graph) => graph.id !== id))
         axios.post(`http://localhost:8000/api/unsub`, {"graphId": [id]})
-            .then(r => setGraphs(graphs.filter((graph) => graph.id !== id)))
             .catch(error => console.error(error));
     }
 

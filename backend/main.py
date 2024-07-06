@@ -1,7 +1,8 @@
-import subprocess
-
+import trio
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from hypercorn.config import Config
+from hypercorn.trio import serve
 from starlette.responses import FileResponse
 from starlette.middleware.cors import CORSMiddleware
 
@@ -27,6 +28,6 @@ app.include_router(sdr_router)
 
 
 if __name__ == "__main__":
-    # uvicorn.run(app, host="0.0.0.0", port=8000)
-    command = ["hypercorn", "main:app", "--worker-class", "trio"]
-    subprocess.run(command)
+    cfg = Config()
+    cfg.bind = ["0.0.0.0:8000"]
+    trio.run(serve, app, cfg)
