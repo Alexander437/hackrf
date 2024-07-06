@@ -1,22 +1,28 @@
+import json
 import os
-import asyncio
 import signal
+from typing import Dict, Any
 
 import fastapi
 import numpy as np
-from websockets import ConnectionClosedError, ConnectionClosedOK
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter
+from starlette.requests import Request
+from sse_starlette.sse import EventSourceResponse
 
-from src.fft import fft
-from src.settings import settings
+from src.logger import logger
 from src.sdr.sdr import get_sdr
+from src.sdr.schemas import SubscribeRequest, UnsubscribeRequest
 
 router = APIRouter(
-    prefix="/sdr",
+    prefix="/api",
     tags=["sdr"],
 )
 
-sdr = get_sdr("HackRF")
+sdr = get_sdr("JScanner")
+
+BUFFER = dict()
+NUM_SAVES = 7
+MESSAGE_STREAM_RETRY_TIMEOUT = 15000  # millisecond
 
 
 def shutdown():
@@ -24,57 +30,100 @@ def shutdown():
     return fastapi.Response(status_code=200, content='Server shutting down...')
 
 
-@router.post("/set_center_freq")
-def set_center_freq(center_freq_m: int):
-    try:
-        sdr.set_center_freq(center_freq_m)
-        return {"center_freq": sdr.center_freq, "error": ""}
-    except Exception as e:
-        return {"center_freq": sdr.center_freq, "error": str(e)}
-
-
 @router.post("/write_file")
-def write_file(class_name: str):
-    IQ = dict()
+def write_file(class_name: str, id: int, srcName: str):
+    global BUFFER
     dir_name = f"./app/data/{class_name}"
     if not os.path.exists(dir_name):
         os.makedirs(dir_name)
 
-    for i in range(3):
-        IQ[i] = sdr.read_samples()
-        if IQ[i] is None:
-            return {"ok": "Error", "message": "Не удалось прочитать данные!"}
-
     num = len(os.listdir(dir_name))
-    np.savez_compressed(f"{dir_name}/{num}.npz", iq0=IQ[0], iq1=IQ[1], iq2=IQ[2],
-                        center_freq=sdr.center_freq, sample_rate=sdr.sample_rate)
-    return {"ok": "Ok", "message": f"Файл {dir_name}/{num}.npz записан"}
+    BUFFER[id]["save_status"] = {
+        "count": NUM_SAVES,
+        "file": f"{dir_name}/{num}.npz",
+        "srcName": srcName,
+        "data": []
+    }
+    return {"ok": "Ok", "message": f"Файл {dir_name}/{num}.npz"}
 
 
-@router.websocket("/ws")
-async def get_spectrum(ws: WebSocket):
-    await ws.accept()
-    try:
+@router.post("/sub")
+def sub(recv: SubscribeRequest):
+    logger.info(f"Subscription to ({recv.id}) {recv.leftFreq} - {recv.rightFreq}")
+    global BUFFER
+    BUFFER[recv.id] = {
+        "data": [],
+        "save_status": {
+            "count": 0,
+            "file": None,
+            "srcName": None,
+            "data": None
+        }
+    }
+    sdr.subscribe(recv)
+    return {"status": "ok"}
+
+
+@router.post("/unsub")
+def unsub(recv: UnsubscribeRequest):
+    global BUFFER
+    for id in recv.graphId:
+        try:
+            del BUFFER[id]
+        except:
+            pass
+    sdr.unsubscribe(recv)
+    logger.info(f"Unsubscription ({recv.id})")
+    return {"status": "ok"}
+
+
+@router.post("/global/graph")
+def receive_data(inp: Dict[Any, Any]):
+    global BUFFER
+    id = inp.get("id")
+    if id in BUFFER:
+        BUFFER[id]["data"].append(inp)
+        if BUFFER[id]["save_status"]["count"] > 0:
+            BUFFER[id]["save_status"]["count"] -= 1
+            BUFFER[id]["save_status"]["data"].append(inp["powerArray"]["data"])
+            if BUFFER[id]["save_status"]["count"] == 0:
+                try:
+                    np.savez_compressed(
+                        BUFFER[id]["save_status"]["file"],
+                        leftFreq=inp["leftFreq"], rightFreq=inp["rightFreq"],
+                        step=inp["step"], width=inp["width"],
+                        data=BUFFER[id]["save_status"]["data"],
+                        method=BUFFER[id]["save_status"]["srcName"]
+                    )
+                    logger.info(f"Saved data in {BUFFER[id]['save_status']['file']}")
+                except Exception as e:
+                    logger.error(e)
+                BUFFER[id]["save_status"] = {
+                    "count": 0,
+                    "file": None,
+                    "srcName": None,
+                    "data": None
+                }
+
+
+@router.get("/stream")
+async def sse(request: Request):
+    async def event_generator():
         while True:
-            iq = sdr.read_samples()
-            if iq is None:
-                print("No samples")
-                continue
+            if await request.is_disconnected():
+                logger.info("Request disconnected")
+                break
 
-            p, freqs, t = fft(iq, sdr.sample_rate, sdr.center_freq,
-                              settings.INIT_NFFT, settings.INIT_DETREND_FUNC, settings.INIT_NOVERLAP)
+            for event_id, value in BUFFER.items():
+                if len(value["data"]) > 0:
+                    yield {
+                        "event": event_id,
+                        "id": "message_id",
+                        "retry": MESSAGE_STREAM_RETRY_TIMEOUT,
+                        "data": json.dumps(value["data"][-1]),
+                    }
+                    value["data"].clear()
+                else:
+                    continue
 
-            await ws.send_json({
-                "psd": p.mean(axis=1).tolist(),
-                "freqs": freqs.tolist()
-            })
-            await asyncio.sleep(0.01)
-    except (WebSocketDisconnect, ConnectionClosedOK):
-        await ws.close()
-        print("WebSocket disconnected")
-        await asyncio.sleep(1)
-        # shutdown()
-    except ConnectionClosedError:
-        print("Connection closed")
-        await asyncio.sleep(1)
-        # shutdown()
+    return EventSourceResponse(event_generator())

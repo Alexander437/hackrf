@@ -6,12 +6,13 @@ const Context = React.createContext({
     name: 'Default',
 });
 
-function WriteInp() {
+function WriteInp({ id, srcName }) {
     const [inputValue, setInputValue] = useState("Drone model");
     const [api, contextHolder] = notification.useNotification();
 
     const saveFile = (class_name) => {
-        axios.post(`http://localhost:8000/sdr/write_file?class_name=${class_name}`).then(r => {
+        axios.post(`http://localhost:8000/api/write_file?class_name=${class_name}&id=${id}&srcName=${srcName}`)
+            .then(r => {
             console.log(r.data);
             api.info({
                 message: `${r.data.ok}`,
@@ -23,7 +24,7 @@ function WriteInp() {
 
     const contextValue = useMemo(
         () => ({
-            name: 'Ant Design',
+            name: 'Spectrum Segmentation',
         }),
         [],
     );

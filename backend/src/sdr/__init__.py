@@ -7,7 +7,9 @@ res = hrf.get_graphs()
 res.show()
 
 """
-from src.sdr.hackrf import HackrfSDR
+# from src.sdr.hackrf import HackrfSDR
+from src.sdr.jscanner import JScanner
 from src.sdr.sdr import register_sdr
 
-register_sdr("HackRF", HackrfSDR)
+# register_sdr("HackRF", HackrfSDR)
+register_sdr("JScanner", JScanner)

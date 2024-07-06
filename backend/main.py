@@ -1,4 +1,5 @@
-import uvicorn
+import subprocess
+
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from starlette.responses import FileResponse
@@ -10,7 +11,7 @@ app = FastAPI()
 app.mount("/app/static", StaticFiles(directory="app/static", html=True), name="static")
 
 
-@app.get("/")
+@app.get("/index")
 async def read_index():
     return FileResponse('app/static/index.html')
 
@@ -24,5 +25,8 @@ app.add_middleware(
 
 app.include_router(sdr_router)
 
+
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    # uvicorn.run(app, host="0.0.0.0", port=8000)
+    command = ["hypercorn", "main:app", "--worker-class", "trio"]
+    subprocess.run(command)
