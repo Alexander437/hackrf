@@ -6,6 +6,7 @@ from hypercorn.trio import serve
 from starlette.responses import FileResponse
 from starlette.middleware.cors import CORSMiddleware
 
+from src.logger import logger
 from src.sdr.router import router as sdr_router
 
 app = FastAPI()
@@ -30,4 +31,5 @@ app.include_router(sdr_router)
 if __name__ == "__main__":
     cfg = Config()
     cfg.bind = ["0.0.0.0:8000"]
+    logger.info("Web page: localhost:8000/index")
     trio.run(serve, app, cfg)
