@@ -2,7 +2,7 @@
 
 ## 1. Подключение
 
-[link](https://my-gnuradio.org/2015/03/19/obzor-hackrf-one-chast-1-raspakovka-i-podklyuchenie/)
+[simple tutorial](https://my-gnuradio.org/2015/03/19/obzor-hackrf-one-chast-1-raspakovka-i-podklyuchenie/)
 
 Присоедините антенну и после этого подключите `hackrf` к USB разъему.
 
