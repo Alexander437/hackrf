@@ -9,18 +9,16 @@ detrends = {
 
 
 def fft(
-    iq: np.ndarray,
-    sample_rate: int,
-    center_freq: int,
-    NFFT: int,
-    detrend: str,
-    noverlap: int
-
+        iq: np.ndarray,
+        sample_rate: float,
+        center_freq: float,
+        NFFT: int,
+        detrend: str,
+        noverlap: int,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-
     detrend_func = detrends[detrend]
     P, freqs, t = mlab._spectral_helper(x=iq, y=None, NFFT=NFFT, Fs=sample_rate,
-                                     detrend_func=detrend_func, noverlap=noverlap, mode='psd')
+                                        detrend_func=detrend_func, noverlap=noverlap, mode='psd')
     freqs = (freqs + center_freq) / 1e6  # in MHz
     P = np.abs(P)
     # Перевод в dB

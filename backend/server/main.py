@@ -8,7 +8,7 @@ from starlette.responses import FileResponse
 from starlette.middleware.cors import CORSMiddleware
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from src.sdr.router import router as sdr_router
+from backend.server.sdr.router import router as sdr_router
 
 app = FastAPI()
 app.mount("/app/static", StaticFiles(directory="app/static", html=True), name="static")
@@ -29,7 +29,7 @@ app.add_middleware(
 app.include_router(sdr_router)
 
 
-def start(app: FastAPI | str = "backend.main:app"):
+def start(app: FastAPI | str = "backend.server.main:app"):
     uvicorn.run(app, host="localhost", port=8000)
 
 

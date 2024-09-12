@@ -1,15 +1,14 @@
 import os
-import asyncio
 import signal
+import asyncio
+import aiofiles.os as aios
 
 import fastapi
 import numpy as np
-from websockets import ConnectionClosedError, ConnectionClosedOK
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from websockets import ConnectionClosedOK, ConnectionClosedError
 
-from src.fft import fft
-from src.settings import settings
-from src.sdr.sdr import get_sdr
+from backend.sdr.sdr import get_sdr
 
 router = APIRouter(
     prefix="/sdr",
@@ -25,20 +24,23 @@ def shutdown():
 
 
 @router.post("/set_center_freq")
-def set_center_freq(center_freq_m: int):
-    try:
-        sdr.set_center_freq(center_freq_m)
-        return {"center_freq": sdr.center_freq, "error": ""}
-    except Exception as e:
-        return {"center_freq": sdr.center_freq, "error": str(e)}
+def set_center_freq(center_freq_m: float):
+    sdr.set_center_freq(center_freq_m)
+    return {"center_freq": sdr.center_freq, "error": ""}
+
+
+@router.post("/set_sample_rate")
+def set_sample_rate(sample_rate_m: float):
+    sdr.set_sample_rate(sample_rate_m)
+    return {"sample_rate": sdr.sample_rate, "error": ""}
 
 
 @router.post("/write_file")
-def write_file(class_name: str):
+async def write_file(class_name: str):
     IQ = dict()
     dir_name = f"./app/data/{class_name}"
-    if not os.path.exists(dir_name):
-        os.makedirs(dir_name)
+    if not await aios.path.exists(dir_name):
+        await aios.makedirs(dir_name)
 
     for i in range(3):
         IQ[i] = sdr.read_samples()
@@ -56,25 +58,19 @@ async def get_spectrum(ws: WebSocket):
     await ws.accept()
     try:
         while True:
-            iq = sdr.read_samples()
-            if iq is None:
-                print("No samples")
+            psd = sdr.get_psd()
+            if psd is None:
                 continue
 
-            p, freqs, t = fft(iq, sdr.sample_rate, sdr.center_freq,
-                              settings.INIT_NFFT, settings.INIT_DETREND_FUNC, settings.INIT_NOVERLAP)
-
-            await ws.send_json({
-                "psd": p.mean(axis=1).tolist(),
-                "freqs": freqs.tolist()
-            })
+            await ws.send_json(psd)
             await asyncio.sleep(0.01)
     except (WebSocketDisconnect, ConnectionClosedOK):
-        await ws.close()
         print("WebSocket disconnected")
-        await asyncio.sleep(1)
         # shutdown()
     except ConnectionClosedError:
         print("Connection closed")
-        await asyncio.sleep(1)
+        await ws.close()
         # shutdown()
+    except KeyboardInterrupt:
+        await ws.close()
+        shutdown()

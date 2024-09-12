@@ -88,7 +88,7 @@ poetry run hackrf-start
 Вы можете собрять исполняемый файл, используя
 
 ```bash
-pyinstaller --distpath app --onefile backend/main.py
+pyinstaller --distpath app --onefile backend/server/main.py
 ```
 После после чего запускать:
 ```bash
