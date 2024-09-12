@@ -18,18 +18,27 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Setup python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: "3.10"
-    - name: Install backend dependencies
+    - name: Install poetry
+      uses: abatilo/actions-poetry@v2
+    - name: Setup a local venv (if no poetry.toml file)
       run: |
-        python -m pip install --upgrade pip
-        pip install -r backend/requirements.txt
+        poetry config virtualenvs.create true --local
+        poetry config virtualenvs.in-project true --local
+    - uses: actions/cache@v3
+      name: Define a cache for the venv based on the dependencies lock file
+      with:
+        path: ./.venv
+        key: venv-${{ hashFiles('poetry.lock') }}
+    - name: Install the project dependencies
+      run: poetry install
 
     - name: Setup node
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
-        node-version: 20.x
+        node-version: '20.x'
         cache: 'npm'
         cache-dependency-path: frontend/package-lock.json
     - name: Install frontend dependencies
@@ -40,12 +49,10 @@ jobs:
       run: |
         cd frontend
         npm run deploy
-        rsync -av --delete dist/* ../backend/app/static
+        rsync -av --delete dist/* ../app/static
 
     - name: Build with Pyinstaller
-      run: |
-        pyinstaller --distpath app --onefile backend/main.py
-        cp -r backend/app/static app
+      run: pyinstaller --distpath app --onefile backend/main.py
 
     - name: Prepare artifact directory
       run: |
@@ -71,18 +78,27 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: "3.10"
-      - name: Install backend dependencies
+      - name: Install poetry
+        uses: abatilo/actions-poetry@v2
+      - name: Setup a local venv (if no poetry.toml file)
         run: |
-          python -m pip install --upgrade pip
-          pip install -r backend/requirements.txt
+          poetry config virtualenvs.create true --local
+          poetry config virtualenvs.in-project true --local
+      - uses: actions/cache@v3
+        name: Define a cache for the venv based on the dependencies lock file
+        with:
+          path: ./.venv
+          key: venv-${{ hashFiles('poetry.lock') }}
+      - name: Install the project dependencies
+        run: poetry install
 
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: '20.x'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
       - name: Install frontend dependencies
@@ -93,12 +109,10 @@ jobs:
         run: |
           cd frontend
           npm run deploy
-          powershell -command "Remove-Item -Recurse -Force ../backend/app/static/*; Copy-Item -Recurse -Force dist/ ../backend/app/static/"
+          powershell -command "Remove-Item -Recurse -Force ../app/static/*; Copy-Item -Recurse -Force dist/ ../app/static/"
 
       - name: Build with Pyinstaller
-        run: |
-          pyinstaller --distpath app --onefile backend/main.py
-          cp -r backend/app/static app
+        run: pyinstaller --distpath app --onefile backend/main.py
 
       - name: Prepare artifact directory
         run: |

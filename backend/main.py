@@ -1,8 +1,12 @@
+import os
+import sys
+
 import uvicorn
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from starlette.responses import FileResponse
 from starlette.middleware.cors import CORSMiddleware
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from src.sdr.router import router as sdr_router
 
@@ -11,7 +15,7 @@ app.mount("/app/static", StaticFiles(directory="app/static", html=True), name="s
 
 
 @app.get("/")
-async def read_index():
+async def get_index_html():
     return FileResponse('app/static/index.html')
 
 app.add_middleware(
@@ -24,5 +28,10 @@ app.add_middleware(
 
 app.include_router(sdr_router)
 
+
+def start(app: FastAPI | str = "backend.main:app"):
+    uvicorn.run(app, host="localhost", port=8000)
+
+
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    start(app=app)

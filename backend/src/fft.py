@@ -23,7 +23,7 @@ def fft(
                                      detrend_func=detrend_func, noverlap=noverlap, mode='psd')
     freqs = (freqs + center_freq) / 1e6  # in MHz
     P = np.abs(P)
-    # Если нужно перевести в dB
+    # Перевод в dB
     P = 10. * np.log10(P)
     # При применении mlab.detrend_linear, частота посередине спектра была удалена
     if NFFT > 10:

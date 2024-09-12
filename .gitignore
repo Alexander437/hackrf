@@ -1,6 +1,7 @@
 .idea
-app/
-./backend/app/data/
+app/data
+app/main
+scanner_test/
 backend/hrf_spec_segm/data/
 
 # Byte-compiled / optimized / DLL files
