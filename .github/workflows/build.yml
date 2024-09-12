@@ -52,7 +52,7 @@ jobs:
         rsync -av --delete dist/* ../app/static
 
     - name: Build with Pyinstaller
-      run: pyinstaller --distpath app --onefile backend/main.py
+      run: poetry run pyinstaller --distpath app --onefile backend/main.py
 
     - name: Prepare artifact directory
       run: |
@@ -112,7 +112,7 @@ jobs:
           powershell -command "Remove-Item -Recurse -Force ../app/static/*; Copy-Item -Recurse -Force dist/ ../app/static/"
 
       - name: Build with Pyinstaller
-        run: pyinstaller --distpath app --onefile backend/main.py
+        run: poetry run pyinstaller --distpath app --onefile backend/main.py
 
       - name: Prepare artifact directory
         run: |
