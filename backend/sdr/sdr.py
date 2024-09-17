@@ -7,7 +7,7 @@ from fastapi import HTTPException, status
 
 from backend.sdr.fft import fft
 from backend.settings import settings
-from backend.schemas.sdr import SdrConfig
+from backend.schemas.sdr import SdrConfig, FFTConfig
 from backend.utils import run_in_executor
 from backend.sdr.logger import set_python_log_handler
 
@@ -95,20 +95,24 @@ class SDR:
         self.sdr.setFrequency(SoapySDR.SOAPY_SDR_RX, 0, center_freq_m * 1e6)
         self.config.center_freq_m = center_freq_m
 
-    def get_psd(self) -> dict[str, list] | None:
+    def get_psd(self, config: FFTConfig) -> dict[str, list] | None:
         buff = self.read_samples()
         if buff is None:
             return
 
-        p, freqs, t = fft(self.iq_buff, self.config.sample_rate_m, self.config.center_freq_m,
-                          settings.INIT_NFFT, settings.INIT_DETREND_FUNC, settings.INIT_NOVERLAP)
+        p, freqs, t = fft(
+            iq=self.iq_buff,
+            sample_rate_m=self.config.sample_rate_m,
+            center_freq_m=self.config.center_freq_m,
+            config=config
+        )
 
         return {
             "psd": p.mean(axis=1).tolist(),
             "freqs": freqs.tolist()
         }
 
-    async def aget_psd(self) -> dict[str, list] | None:
+    async def aget_psd(self, config: FFTConfig) -> dict[str, list] | None:
         buff = self.read_samples()
         if buff is None:
             return
@@ -118,9 +122,7 @@ class SDR:
             self.iq_buff,
             self.config.sample_rate_m,
             self.config.center_freq_m,
-            settings.INIT_NFFT,
-            settings.INIT_DETREND_FUNC,
-            settings.INIT_NOVERLAP
+            config
         )
 
         return {

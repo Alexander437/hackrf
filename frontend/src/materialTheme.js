@@ -1,9 +1,9 @@
 export const theme = {
     components: {
         Button: {
-            defaultBg: "black",
-            defaultBorderColor: "black",
-            defaultColor: "white",
+            defaultBg: "white",
+            defaultBorderColor: "white",
+            defaultColor: "gray-400",
 
             defaultHoverBg: "#696969",
             defaultHoverBorderColor: "black",

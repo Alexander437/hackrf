@@ -8,7 +8,9 @@ import numpy as np
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, status, Depends
 from websockets import ConnectionClosedOK, ConnectionClosedError
 
+from backend.schemas.sdr import FFTConfig
 from backend.sdr.sdr import get_sdr, sdr_registry, SDR
+from backend.settings import settings
 
 router = APIRouter(
     prefix="/sdr",
@@ -81,8 +83,11 @@ async def get_spectrum(
 ):
     await ws.accept()
     try:
+        fft_config_message = await ws.receive_json()
+        fft_config = FFTConfig(**fft_config_message)
+
         while True:
-            psd = await sdr.aget_psd()
+            psd = await sdr.aget_psd(fft_config)
             if psd is None:
                 continue
             await asyncio.sleep(0.1)

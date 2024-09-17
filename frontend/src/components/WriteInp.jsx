@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react"
 import {Button, Input, notification} from "antd"
-import axios from "axios"
+import {useSaveFileMutation} from "../stores/sdr/index.js";
 
 const Context = React.createContext({
   name: 'Default',
@@ -9,15 +9,15 @@ const Context = React.createContext({
 export default function WriteInp() {
     const [inputValue, setInputValue] = useState("Drone model");
     const [api, contextHolder] = notification.useNotification()
+    const [saveFilePost] = useSaveFileMutation()
 
-    const saveFile = (class_name) => {
-        axios.post(`http://localhost:8000/sdr/write_file?class_name=${class_name}`).then(r => {
-            console.log(r.data);
-            api.info({
-            message: `${r.data.ok}`,
-            description: `${r.data.message}`,
+    const saveFile = async (class_name) => {
+        const res = await saveFilePost(class_name)
+        console.log(res.data)
+        api.info({
+            message: `${res.data.ok}`,
+            description: `${res.data.message}`,
             placement: 'bottomRight',
-            });
         })
     }
 

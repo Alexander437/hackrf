@@ -1,15 +1,9 @@
 import {useState} from "react"
 import {Button, InputNumber, Slider} from "antd"
-import axios from "axios"
+import {useSetCenterFreqMutation} from "../stores/sdr/index.js";
 
-
-const setCenterFreq = (val) => {
-    axios.post(`http://localhost:8000/sdr/set_center_freq?center_freq_m=${val}`).then(r => {
-        console.log(r.data)
-    })
-}
-
-export default function FSlider() {
+export default function FreqSlider() {
+  const [setCenterFreq] = useSetCenterFreqMutation()
   const [inputValue, setInputValue] = useState(20);
   const marks = {
       20: '20',

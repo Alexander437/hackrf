@@ -30,7 +30,7 @@ export const OPTIONS = {
     },
     scales: {
         y: {
-            min: -100,
+            min: -95,
             // max: -117,
             ticks: {
                 stepSize: 2
