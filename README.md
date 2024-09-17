@@ -1,5 +1,7 @@
 # HackRF
 
+- https://github.com/rapidsai/cusignal
+
 ## 1. Подключение
 
 [simple tutorial](https://my-gnuradio.org/2015/03/19/obzor-hackrf-one-chast-1-raspakovka-i-podklyuchenie/)
@@ -24,9 +26,33 @@ sudo apt-get install hackrf gr-osmosdr libhackrf-dev libhackrf0 libusb-1.0-0 lib
 # Возможно, после установки `hackrf_info` будет работать только под sudo
 # Это исправляется отключением и повторным подключением hackrf к usb
 hackrf_info
-# https://pypi.org/project/pyhackrf/, https://github.com/dressel/pyhackrf
-# для работы блоков в gnuradio
-# sudo apt-get install -y python3-soapysdr
+```
+
+Установка `SoapySDR`
+```bash
+sudo apt-get install -y cmake g++ libpython-dev python-numpy swig
+sudo apt-get install -y swig soapysdr-tools python3-soapysdr 
+sudo apt-get install -y hackrf soapysdr-module-hackrf soapysdr-module-rfspace
+# Build SoapySDR
+git clone https://github.com/pothosware/SoapySDR.git
+cd SoapySDR
+mkdir build && cd build
+cmake ..
+make -j`nproc`
+sudo make install -j`nproc`
+# Добавить в .bashrc export
+export LD_LIBRARY_PATH=/usr/local/lib
+SoapySDRUtil --info
+# Build Hackrf driver
+git clone https://github.com/pothosware/SoapyHackRF.git
+cd SoapyHackRF/
+mkdir build && cd build
+cmake ../
+sudo make install
+SoapySDRUtil --probe="driver=hackrf"
+# в код python нужно добавить путь к soapysdr
+# sys.path.append('/usr/local/lib/python3.12/site-packages')
+# https://github.com/pothosware/SoapySDR/wiki/PythonSupport
 ```
 
 ## 3. Запуск приложения

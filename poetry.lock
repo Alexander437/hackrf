@@ -2210,20 +2210,6 @@ files = [
 windows-terminal = ["colorama (>=0.4.6)"]
 
 [[package]]
-name = "pyhackrf"
-version = "0.2.0"
-description = "Python wrapper for the libhackrf library"
-optional = false
-python-versions = ">=3.9,<4.0"
-files = [
-    {file = "pyhackrf-0.2.0-cp39-cp39-manylinux_2_31_x86_64.whl", hash = "sha256:0ba9cd8eba422ad5b75cddd3ea85b4a1ff5749201aa65f510c2f3f8fa1669021"},
-    {file = "pyhackrf-0.2.0.tar.gz", hash = "sha256:4a31b956ad3d5e4bcf53518734c9dbd20373405346f20b150c78f724065dfe77"},
-]
-
-[package.dependencies]
-numpy = ">=1.20.3,<2.0.0"
-
-[[package]]
 name = "pyinstaller"
 version = "6.10.0"
 description = "PyInstaller bundles a Python application and all its dependencies into a single package."
@@ -2817,6 +2803,19 @@ test = ["build[virtualenv] (>=1.0.3)", "filelock (>=3.4.0)", "ini2toml[lite] (>=
 type = ["importlib-metadata (>=7.0.2)", "jaraco.develop (>=7.21)", "mypy (==1.11.*)", "pytest-mypy"]
 
 [[package]]
+name = "simplesoapy"
+version = "1.5.1"
+description = "Simple pythonic wrapper for SoapySDR library"
+optional = false
+python-versions = "*"
+files = [
+    {file = "SimpleSoapy-1.5.1.tar.gz", hash = "sha256:14923538128676eb18d6f7e094c91d77e54a3d1199efdbf5b95520f94b15002e"},
+]
+
+[package.dependencies]
+numpy = "*"
+
+[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -3204,4 +3203,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10, <3.14"
-content-hash = "e4ae7ccb88a6cfb5149182b8793e1a040f8c8a068cebb61e1cd8396abc56ecc1"
+content-hash = "9af01a2ac5d48a96c3c34979194935753c3c4196a763024d981f2ad9e094321c"
